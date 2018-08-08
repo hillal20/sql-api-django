@@ -1,31 +1,32 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { withRouter } from "react-router";
 class Notes extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      notId: "",
-      title: "",
-      content: "",
-      email: ""
+      username: "",
+      password: ""
     };
   }
-  componentWillMount = () => {};
+
   eventHandler = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
   submit = () => {
     alert("hello");
     let object = {
-      noteId: this.state.notId,
-      title: this.state.title,
-      content: this.state.content,
-      email: this.state.email
+      username: this.state.username,
+      password: this.state.password
     };
-    let promise = axios.post("http://localhost:8000/api/notes", object);
+
+    let promise = axios.post("http://localhost:8000/api-token-auth/", object);
+
     promise
       .then(response => {
-        console.log(response.data);
+        console.log("token", response.data.token);
+        window.localStorage.setItem("token", response.data.token);
       })
       .catch(error => {
         console.log(error);
@@ -36,54 +37,38 @@ class Notes extends Component {
     return (
       <div>
         <h3>Hello Guy</h3>
-        <form>
-          <div>
-            <input
-              type="text"
-              placeholder="noteId"
-              value={this.state.noteId}
-              name="noteId"
-              onChange={this.eventHandler}
-            />
-          </div>
-          <div>
-            <input
-              type="text"
-              placeholder="title"
-              name="title"
-              value={this.state.title}
-              onChange={this.eventHandler}
-            />
-          </div>
+
+        <div>
           <input
             type="text"
-            placeholder="email"
-            name="email"
-            value={this.state.email}
+            placeholder="username"
+            value={this.state.username}
+            name="username"
             onChange={this.eventHandler}
           />
-          <div>
-            <textarea
-              type="text"
-              placeholder="content"
-              value={this.state.content}
-              name="content"
-              onChange={this.eventHandler}
-            />
-          </div>
-          <div>
-            <button
-              onClick={() => {
-                this.submit;
-              }}
-            >
-              Submit
-            </button>
-          </div>
-        </form>
+        </div>
+        <div>
+          <input
+            type="text"
+            placeholder="password"
+            name="password"
+            value={this.state.password}
+            onChange={this.eventHandler}
+          />
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              this.submit();
+              this.props.history.push("/notes");
+            }}
+          >
+            Submit
+          </button>
+        </div>
       </div>
     );
   }
 }
 
-export default Notes;
+export default withRouter(Notes);
